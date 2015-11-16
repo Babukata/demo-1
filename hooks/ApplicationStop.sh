@@ -1,4 +1,4 @@
 #!/bin/bash
 
-killall -9 app
+killall -9 app &> /dev/null
 exit 0
