@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-const VERSION string = "1.0.7"
+const VERSION string = "1.1.1"
 
 func hello(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Current version: "+VERSION)
