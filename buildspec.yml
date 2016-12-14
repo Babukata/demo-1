@@ -7,8 +7,9 @@ phases:
   build:
     commands:
       - go build -o app
-      
+
 artifacts:
   files:
     - app
+    - appspec.yml
   discard-paths: yes
