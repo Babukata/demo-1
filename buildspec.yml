@@ -1,13 +1,12 @@
 version: 0.1
             
 phases:
-  pre_build:
+  install:
     commands:
-      - go get ./...
+      - env
   build:
     commands:
       - go build -o app
-
 artifacts:
   files:
     - app
