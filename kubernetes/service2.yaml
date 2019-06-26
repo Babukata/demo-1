@@ -1,0 +1,69 @@
+apiVersion: appmesh.k8s.aws/v1beta1
+kind: VirtualService
+metadata:
+  name: service2
+  namespace: appmesh-demo
+spec:
+  meshName: appmesh
+  routes:
+    - name: service2-route
+      http:
+        match:
+          prefix: /
+        action:
+          weightedTargets:
+            - virtualNodeName: service2
+              weight: 100
+---
+apiVersion: appmesh.k8s.aws/v1beta1
+kind: VirtualNode
+metadata:
+  name: service2
+  namespace: appmesh-demo
+spec:
+  meshName: appmesh
+  listeners:
+    - portMapping:
+        port: 80
+        protocol: http
+  serviceDiscovery:
+    dns:
+      hostName: service2.appmesh-demo.svc.cluster.local
+  backends:
+    - virtualService:
+        virtualServiceName: service3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service2
+  namespace: appmesh-demo
+  labels:
+    app: service2
+spec:
+  ports:
+    - port: 80
+      name: http
+  selector:
+    app: service2
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: service2
+  namespace: appmesh-demo
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: service2
+    spec:
+      containers:
+        - name: service
+          image: maddox/serve-and-request:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: OUTBOUND
+              value: http://service3
